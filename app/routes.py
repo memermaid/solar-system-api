@@ -32,12 +32,14 @@ def get_all_planets():
 
 @planets_bp.route('/<planet_id>',methods = ['GET'])
 def get_one_planet(planet_id):
+    planet_id = int(planet_id)
     for planet in planets:
         if planet_id == planet.id:
-            return {
+            rsp = {
             'id': planet.id,
             'name': planet.name,
             'description': planet.description,
             'fun_fact': planet.fun_fact
             }
+            return jsonify(rsp)
         
