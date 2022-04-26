@@ -32,7 +32,6 @@ def get_all_planets():
 
 @planets_bp.route('/<planet_id>',methods = ['GET'])
 def get_one_planet(planet_id):
-    
     planet = validate_input(planet_id)
     rsp = {
         'id': planet.id,
@@ -42,13 +41,15 @@ def get_one_planet(planet_id):
         }
     return jsonify(rsp)
 
-def validate_input( planet_id):
+def validate_input(planet_id):
     try:
         planet_id = int(planet_id)
     except ValueError:
-        abort(make_response({'msg': f'invalid id {planet_id}'},400))
+        abort(make_response({'msg': f'Invalid id {planet_id}'}, 400))
     
     for planet in planets:
         if planet_id == planet.id:
             return planet
-    abort(make_response ({'msg': f'Planet with id {planet_id} does not exist'},401))
+
+    abort(make_response ({'msg': f'Planet with id {planet_id} does not exist'}, 401))
+    
