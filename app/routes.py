@@ -51,5 +51,5 @@ def validate_input(planet_id):
         if planet_id == planet.id:
             return planet
 
-    abort(make_response ({'msg': f'Planet with id {planet_id} does not exist'}, 401))
+    abort(make_response ({'msg': f'Planet with id {planet_id} does not exist'}, 404))
     
