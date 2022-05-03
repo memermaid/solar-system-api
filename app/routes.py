@@ -70,6 +70,8 @@ def delete_one_planet(planet_id):
     db.session.delete(planet)
     db.session.commit()
 
+    return make_response(f"Planet #{planet.id} was successfully deleted"), 200
+
 @planets_bp.route('/<planet_id>',methods = ['PUT'])
 def update_one_planet(planet_id):
     planet = validate_input(planet_id)
@@ -81,3 +83,5 @@ def update_one_planet(planet_id):
     except KeyError:
         return "name, description and fun fact are required", 404
     db.session.commit()
+
+    return make_response(f"Planet #{planet.id} was successfully updated"), 200
