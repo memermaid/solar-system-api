@@ -13,6 +13,18 @@ from app.models.planet import Planet
             
 planets_bp = Blueprint('planets_bp', __name__, url_prefix='/planets')
 
+def validate_input(planet_id):
+    try:
+        planet_id = int(planet_id)
+    except ValueError:
+        abort(make_response({'msg': f'Invalid id {planet_id}'}, 400))
+    planets = Planet.query.all()
+    for planet in planets:
+        if planet_id == planet.id:
+            return planet
+
+    abort(make_response ({'msg': f'Planet with id {planet_id} does not exist'}, 404))
+    
 @planets_bp.route('', methods=['GET'])
 def get_all_planets():
     planets = Planet.query.all()
@@ -40,39 +52,32 @@ def create_planet():
 
     return {'msg': f'Successfuly created a planet with id {new_planet.id}'}, 201
 
+@planets_bp.route('/<planet_id>',methods = ['GET'])
+def get_one_planet(planet_id):
+    planet = validate_input(planet_id)
+    rsp = {
+        'id': planet.id,
+        'name': planet.name,
+        'description': planet.description,
+        'fun_fact': planet.fun_fact
+        }
+    return jsonify(rsp), 200
 
-# @planets_bp.route('', methods=['GET'])
-# def get_all_planets():
-#     planets_resp = []
-#     for planet in planets:
-#         planets_resp.append({
-#             'id': planet.id,
-#             'name': planet.name,
-#             'description': planet.description,
-#             'fun_fact': planet.fun_fact
-#         })
-#     return jsonify(planets_resp)
+@planets_bp.route('/<planet_id>',methods = ['DELETE'])
+def delete_one_planet(planet_id):
+    planet = validate_input(planet_id)
 
-# @planets_bp.route('/<planet_id>',methods = ['GET'])
-# def get_one_planet(planet_id):
-#     planet = validate_input(planet_id)
-#     rsp = {
-#         'id': planet.id,
-#         'name': planet.name,
-#         'description': planet.description,
-#         'fun_fact': planet.fun_fact
-#         }
-#     return jsonify(rsp)
+    db.session.delete(planet)
+    db.session.commit()
 
-# def validate_input(planet_id):
-#     try:
-#         planet_id = int(planet_id)
-#     except ValueError:
-#         abort(make_response({'msg': f'Invalid id {planet_id}'}, 400))
-    
-#     for planet in planets:
-#         if planet_id == planet.id:
-#             return planet
-
-#     abort(make_response ({'msg': f'Planet with id {planet_id} does not exist'}, 404))
-    
+@planets_bp.route('/<planet_id>',methods = ['PUT'])
+def update_one_planet(planet_id):
+    planet = validate_input(planet_id)
+    request_body = request.get_json()
+    try:
+        planet.name = request_body['name']
+        planet.description = request_body['description']
+        planet.fun_fact= request_body['fun_fact']
+    except KeyError:
+        return "name, description and fun fact are required", 404
+    db.session.commit()
