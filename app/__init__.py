@@ -18,8 +18,6 @@ def create_app(test_config=None):
         app.config['TESTING'] = True
         app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('TESTING_SQLALCHEMY_DATABASE_URI')
 
-
-
     db.init_app(app)
     migrate.init_app(app, db)
 
