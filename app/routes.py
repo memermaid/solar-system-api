@@ -32,7 +32,7 @@ def get_all_planets():
         planets = Planet.query.filter_by(name = name_query.capitalize())
     else:
         planets = Planet.query.all()
-        
+
     planets_response = []
     for planet in planets:
         planets_response.append({
@@ -57,11 +57,15 @@ def create_planet():
 
 @planets_bp.route('/<planet_id>',methods = ['GET'])
 def get_one_planet(planet_id):
-    name_query = request.args.get('name')
-    if name_query:
-        planets = Planet.query.filter_by(name=name_query.capitalize())
-    else:
-        planets = Planet.query.all()
+    planet = validate_input(planet_id)
+    rsp = {
+        'id': planet.id,
+        'name': planet.name,
+        'decription': planet.description,
+        'fun_fact': planet.fun_fact
+    }
+    return jsonify(rsp), 200
+    
 
 def update_one_planet(planet_id):
     planet = validate_input(planet_id)
