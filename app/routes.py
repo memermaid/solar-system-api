@@ -27,9 +27,13 @@ def validate_input(planet_id):
     
 @planets_bp.route('', methods=['GET'])
 def get_all_planets():
-    planets = Planet.query.all()
+    name_query =  request.args.get('name')
+    if name_query:
+        planets = Planet.query.filter_by(name = name_query.capitalize())
+    else:
+        planets = Planet.query.all()
+        
     planets_response = []
-
     for planet in planets:
         planets_response.append({
         'id': planet.id,
@@ -42,9 +46,9 @@ def get_all_planets():
 @planets_bp.route('', methods=['POST'])
 def create_planet():
     request_body = request.get_json()
-    new_planet = Planet(name=request_body['name'],
+    new_planet = Planet(name=request_body['name'].capitalize(),
                         description=request_body['description'],
-                        fun_fact=request_body['fun_fact'])
+                        fun_fact=request_body['fun_fact'].capitalize())
     
     db.session.add(new_planet)
     db.session.commit()
