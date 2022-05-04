@@ -57,25 +57,12 @@ def create_planet():
 
 @planets_bp.route('/<planet_id>',methods = ['GET'])
 def get_one_planet(planet_id):
-    planet = validate_input(planet_id)
-    rsp = {
-        'id': planet.id,
-        'name': planet.name,
-        'description': planet.description,
-        'fun_fact': planet.fun_fact
-        }
-    return jsonify(rsp), 200
+    name_query = request.args.get('name')
+    if name_query:
+        planets = Planet.query.filter_by(name=name_query.capitalize())
+    else:
+        planets = Planet.query.all()
 
-@planets_bp.route('/<planet_id>',methods = ['DELETE'])
-def delete_one_planet(planet_id):
-    planet = validate_input(planet_id)
-
-    db.session.delete(planet)
-    db.session.commit()
-
-    return make_response(f"Planet #{planet.id} was successfully deleted"), 200
-
-@planets_bp.route('/<planet_id>',methods = ['PUT'])
 def update_one_planet(planet_id):
     planet = validate_input(planet_id)
     request_body = request.get_json()
