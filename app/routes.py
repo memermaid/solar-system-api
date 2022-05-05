@@ -61,7 +61,7 @@ def get_one_planet(planet_id):
     rsp = {
         'id': planet.id,
         'name': planet.name,
-        'decription': planet.description,
+        'description': planet.description,
         'fun_fact': planet.fun_fact
     }
     return jsonify(rsp), 200
